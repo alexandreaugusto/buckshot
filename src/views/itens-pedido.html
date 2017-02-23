@@ -1,0 +1,11 @@
+                {% for item_pedido in itens_pedido %}
+                <article class="col-sm-12">
+                    <div class="row">
+                        <div class="col-sm-8"><a href="#" data-toggle="modal" data-target="#modal-item" data-item-id="{{ item_pedido.cod_item }}">{{ item_pedido.cod_item }} - {{ item_pedido.produto }} - {{ item_pedido.defeito|slice(0, 30) }}</a></div>
+                        <div class="col-sm-2"><a href="{{ app.request.basepath }}/editar-pedido/{{ item_pedido.cod_item }}">[Editar]</a></div>
+                        <div class="col-sm-2"><a href="{{ app.request.basepath }}/excluir-item-pedido/{{ item_pedido.cod_item }}">[Excluir]</a></div>
+                    </div>
+                </article>
+                {% else %}
+                <article class="col-sm-12">Ainda n&atilde;o h&aacute; &iacute;tens adicionados neste chamado!</article>
+                {% endfor %}

@@ -1,0 +1,63 @@
+
+  		<form class="form-horizontal" method="post" action="{{ app.request.basepath }}/vendas/confirmar-venda/{{ data_venda }}">
+            <input type="hidden" name="fornada-id" id="fornada-id" value="{{ idFornada }}">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Confirme seu pedido</h4>
+            </div>
+            <div class="modal-body">
+      			<fieldset>
+                    <div class="form-group">
+                        <div class="row text-center">
+                            <div class="span12">
+                                <div class="row">
+                                    <div class="col-sm-12 texto">
+                                        <h3 class="col-sm-6 cabecalho">Itens do pedido</h3>
+                                        <h3 class="col-sm-3 cabecalho">Quantidade</h3>
+                                        <h3 class="col-sm-3 cabecalho">Valor</h3>
+                                        {% for key, item in items %}
+                                        {% set produto = key %}
+                                            {% for key, sabor in items[key] %}
+                                                {% if sabor.erro is not defined %}
+                                        <div class="row">
+                                            <div class="col-sm-6"><u>{{ produto }}</u> - {{ key }}</div>
+                                            <div class="col-sm-3">{{ sabor.quantidade }}</div>
+                                            <div class="col-sm-3">R$ {{ sabor.preco }}</div>
+                                        </div>
+                                                {% else %}
+                                        <div class="row">
+                                            <div class="alert alert-danger" role="alert">
+                                                <strong>Que pena!</strong> {% if sabor.erro > 0 %}S&oacute; temos {{ sabor.quantidade }} unidade(s) do produto {{ produto }} - {{ key }}!{% else %}N&atilde;o temos mais este produto!{% endif %}
+                                            </div>
+                                        </div>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                        <div class="row">
+                                            <div class="col-sm-12 text-center">
+                                                Nenhum &iacute;tem neste pedido. Como voc&ecirc; veio parar aqui?!
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                        {% if items|length > 0 %}
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <strong>Total</strong>
+                                            </div>
+                                            <div class="col-sm-6 text-left">
+                                                <strong>R$ {{ total }}</strong>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>      				
+      			</fieldset>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" data-dismiss="modal">Fechar</button>
+                {% if items|length > 0 %}<button type="submit" class="btn btn-success">Confirmo meu pedido, quero pag&aacute;-lo!</button>{% endif %}
+            </div>
+  		</form>

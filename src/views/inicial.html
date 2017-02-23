@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="Brigadeiro Gourmet Del&iacute;cia">
+
+	<title>Brigadeiro Gourmet Del&iacute;cia</title>
+
+	<!-- Bootstrap core CSS -->
+	<link href="{{ app.request.basepath }}/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="{{ app.request.basepath }}/css/style.css" rel="stylesheet">
+
+    <!-- Begin MailChimp Signup Form -->
+    <link href="//cdn-images.mailchimp.com/embedcode/classic-10_7.css" rel="stylesheet" type="text/css">
+    <style type="text/css">
+        #mc_embed_signup{clear:left; font:14px Helvetica,Arial,sans-serif;}
+    </style>
+
+	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+      <![endif]-->
+  </head>
+  <body role="document">
+    <div id="faixa-azul">&nbsp;</div>
+    <div id="faixa-amarela">&nbsp;</div>
+  	<div class="container" role="main">
+        
+        <div class="row">
+            <div class="col-sm-12 text-center" id="topo">
+                <img src="{{ app.request.basepath }}/img/logotipo-brigadeiro.png" alt="Logotipo Brigadeiro Gourmet Delícia">
+                <h1 class="text-center">Brigadeiro Gourmet<br>Del&iacute;cia</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-8 col-sm-offset-2">
+                <div id="mc_embed_signup">
+                    <form action="//brigadeirogourmetdelicia.us7.list-manage.com/subscribe/post?u=472a529a98e71f9b50bb8e641&amp;id=f9e4080d3c" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+                        <div id="mc_embed_signup_scroll">
+                            <h2>Receba nossas deliciosas novidades e ofertas em seu e-mail!</h2>
+                            <div class="indicates-required"><span class="asterisk">*</span> campos obrigat&oacute;rios</div>
+                            <div class="mc-field-group">
+                                <label for="mce-EMAIL">Seu e-mail <span class="asterisk">*</span></label>
+                                <input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL">
+                            </div>
+                            <div class="mc-field-group">
+                                <label for="mce-FNAME">Seu nome </label>
+                                <input type="text" value="" name="FNAME" class="" id="mce-FNAME">
+                            </div>
+                            <div class="mc-field-group">
+                                <label for="mce-LNAME">Seu sobrenome </label>
+                                <input type="text" value="" name="LNAME" class="" id="mce-LNAME">
+                            </div>
+                            <div id="mce-responses" class="clear">
+                                <div class="response" id="mce-error-response" style="display:none"></div>
+                                <div class="response" id="mce-success-response" style="display:none"></div>
+                            </div>
+                            <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+                            <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_472a529a98e71f9b50bb8e641_f9e4080d3c" tabindex="-1" value=""></div>
+                            <div class="clear"><input type="submit" value="Inscrever-se" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+                        </div>
+                    </form>
+                </div>
+                <!--End mc_embed_signup-->
+            </div>
+        </div>
+  		
+    </div>
+
+    {% include 'footer.html' %}
+
+    <script type='text/javascript' src='//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js'></script>
+    <script type='text/javascript'>(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[0]='EMAIL';ftypes[0]='email';fnames[1]='FNAME';ftypes[1]='text';fnames[2]='LNAME';ftypes[2]='text';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
+
+</body>
+</html>
