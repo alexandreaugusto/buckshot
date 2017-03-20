@@ -38,9 +38,9 @@ $app->get('/vendas/{dataVenda}', function($dataVenda) use ($app) {
 
             return $app['twig']->render('pedido.html', array('fornada' => $fornada, 'produtos' => $produtos));
         } else
-            return $app->redirect('/inicial');
+            return $app->redirect('/');
     } else
-        return $app->redirect('/inicial');
+        return $app->redirect('/');
 
 });
 
@@ -102,6 +102,6 @@ $app->post('/vendas/processar-venda/{dataVenda}', function(Request $request, $da
 
 });
 
-$app->get('/inicial', function() use ($app) {
+$app->get('/', function() use ($app) {
     return $app['twig']->render('inicial.html');
 });
