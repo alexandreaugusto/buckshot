@@ -1,7 +1,24 @@
-
 body {
     color:#a45e4d;
     background-color:#fffbed;
+}
+
+@media screen and (min-width: 768px) {
+  body {
+      padding-bottom: 450px;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  body {
+      padding-bottom: 200px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  body {
+      padding-bottom: 200px;
+  }
 }
 
 #faixa-marrom {
@@ -49,6 +66,10 @@ figcaption {
     text-align:justify;
 }
 
+figcaption span {
+    font-weight:bold;
+}
+
 .span12{
     margin: 0 auto;
     border-top:4px solid #ffcb05;
@@ -66,10 +87,6 @@ figcaption {
 html {
   position: relative;
   min-height: 100%;
-}
-body {
-  /* Margin bottom by footer height */
-  margin-bottom: 176px;
 }
 
 .footer {
@@ -104,4 +121,13 @@ body {
 
 .footer a:hover {
     text-decoration:underline;
+}
+
+.formulario .control-label, .formulario .col-lg-10 {
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
+.formulario .submit {
+    margin: 8px;
 }

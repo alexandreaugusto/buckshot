@@ -9,17 +9,17 @@ class LoginRedirect implements ControllerProviderInterface {
 
     public function connect(Application $app) {
         $controller = $app['controllers_factory'];
-        $controller->get('/', array($this, 'index'))->bind('login-redirect');
+        $controller->get('/', array($this, 'index'))->bind('cliente-login-redirect');
         return $controller;
     }
 
     public function index(Application $app) {
 
-        if ($app['security']->isGranted('ROLE_CUSTOMER')) {
-            return $app->redirect($app['url_generator']->generate('home'));
+        if (($app['security.authorization_checker']->isGranted('ROLE_CUSTOMER'))) {
+            return $app->redirect($app['url_generator']->generate('cliente'));
         }
 
-        return $app->redirect('/registrar-cliente');
+        return $app->redirect('/novo-cliente');
     }
 
 }

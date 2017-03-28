@@ -2,6 +2,110 @@
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Silex\Provider\FormServiceProvider;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\User as AdvancedUser;
+
+$app->before(function () use ($app) {
+    $app['translator']->addLoader('xlf', new Symfony\Component\Translation\Loader\XliffFileLoader());
+    $app['translator']->addResource('xlf', __DIR__.'/vendor/symfony/validator/Symfony/Component/Validator/Resources/translations/validators/validators.sr_Latn.xlf', 'sr_Latn', 'validators');
+});
+
+$login = function(Request $request) use ($app) {
+    return $app['twig']->render('login_.html', array(
+        'error' => $app['security.last_error']($request),
+        'last_username' => $app['session']->get('_security.last_username'),
+    ));
+};
+
+$app->get('/login', $login);
+
+$app->mount('/cliente/login/redirect', new App\Controller\LoginRedirect());
+
+/* clientes */
+
+$app->match('/novo-cliente', function (Request $request) use ($app) {
+
+    $form = $app['form.factory']->createBuilder('form')
+        ->add('nome', 'text', array('attr' => array('placeholder' => 'Nome completo'),
+                                    'constraints' => array(new Assert\NotBlank(), new Assert\Length(array('min' => 3)))
+                                ))
+        ->add('email', 'email', array('label' => 'E-mail', 'attr' => array('placeholder' => 'Seu e-mail'), 'constraints' => new Assert\Email()))
+        ->add('senha', 'password', array('attr' => array('placeholder' => 'Defina uma senha'),
+                                        'constraints' => array(new Assert\NotBlank(), new Assert\Length(array('min' => 8)))
+                                ))
+        ->add('telefone', 'text', array('attr' => array('placeholder' => 'Telefone residencial')))
+        ->add('celular', 'text', array('attr' => array('placeholder' => 'Telefone celular')))
+        ->add('endereco')
+        ->add('bairro')
+        ->add('cidade')
+        ->add('estado', ChoiceType::class, array(
+            'choices' => array(""=>"","AC"=>"Acre", "AL"=>"Alagoas", "AM"=>"Amazonas", "AP"=>"Amapa","BA"=>"Bahia","CE"=>"Ceara","DF"=>"Distrito Federal","ES"=>"Espirito Santo","GO"=>"Goias","MA"=>"Maranhao","MT"=>"Mato Grosso","MS"=>"Mato Grosso do Sul","MG"=>"Minas Gerais","PA"=>"Para","PB"=>"Paraiba","PR"=>"Parana","PE"=>"Pernambuco","PI"=>"Piaui","RJ"=>"Rio de Janeiro","RN"=>"Rio Grande do Norte","RO"=>"Rondonia","RS"=>"Rio Grande do Sul","RR"=>"Roraima","SC"=>"Santa Catarina","SE"=>"Sergipe","SP"=>"Sao Paulo","TO"=>"Tocantins"),
+            'constraints' => array(new Assert\NotBlank())
+        ))
+        ->add('cep', 'text', array('label' => 'CEP', 'attr' => array('placeholder' => 'CEP da sua casa'), 'constraints' => array(new Assert\NotBlank(), new Assert\Length(array('min' => 9)))))
+        ->getForm();
+
+    if ($request->isMethod('POST')) {
+        $form->bind($request);
+        if ($form->isValid()) {
+            $data = $form->getData();
+            $user = new AdvancedUser($data['email'], $data['senha']);
+            $encoder = $app['security.encoder_factory']->getEncoder($user);
+            $encodedPassword = $encoder->encodePassword($data['senha'], $user->getSalt());
+            $app['db']->insert('clientes', array(
+                'telefone' => $data['telefone'], 'celular' => $data['celular'], 'senha' => $encodedPassword,
+                'endereco' => $data['endereco'], 'nome' => $data['nome'], 'email' => $data['email'],
+                'bairro' => $data['bairro'], 'uf' => $data['estado'], 'cep' => $data['cep'], 'cidade' => $data['cidade']));
+            
+            $app['session']->getFlashBag()->add('message', 'Cliente registrado com sucesso!');
+        }
+    }
+
+    return $app['twig']->render('form-bootstrap-anon.html', array('form' => $form->createView()));
+});
+
+$app->match('/recuperar-senha', function (Request $request) use ($app) {
+
+    $form = $app['form.factory']->createBuilder('form')
+        ->add('email', 'email')
+        ->getForm();
+
+    if ($request->isMethod('POST')) {
+        $form->bind($request);
+        if ($form->isValid()) {
+            $data = $form->getData();
+            $sql = "SELECT * FROM clientes WHERE email = ?";
+            $cliente = $app['db']->fetchAssoc($sql, array((string)trim($data['email'])));
+
+            if($cliente != null) {
+                $random = random_password(8);
+
+                $app['monolog']->addDebug("Nova senha: " . $random);
+
+                $user = new AdvancedUser($data['email'], $random);
+                $encoder = $app['security.encoder_factory']->getEncoder($user);
+                $encodedPassword = $encoder->encodePassword($random, $user->getSalt());
+                $app['db']->update('clientes', array('senha' => $encodedPassword), array('email' => trim($data['email'])));
+                
+                $app['session']->getFlashBag()->add('message', 'Uma nova senha foi enviada para seu e-mail cadastrado!');
+            } else
+                $app['session']->getFlashBag()->add('error', 'Não foi encontrado nenhum cliente cadastrado com o e-mail ' . $data['email'] . '!');
+
+        }
+    }
+
+    return $app['twig']->render('form-bootstrap-anon.html', array('form' => $form->createView()));
+});
+
+$app->get('/cliente', function() use ($app) {
+    return $app['twig']->render('cliente.html');
+})->bind('cliente');
+
+/* fim clientes */
+
+/* vendas */
 
 $app->get('/vendas/{dataVenda}', function($dataVenda) use ($app) {
 
@@ -102,6 +206,21 @@ $app->post('/vendas/processar-venda/{dataVenda}', function(Request $request, $da
 
 });
 
+$app->get('/produtos', function() use ($app) {
+    $sql = "SELECT tp.tipo, p.descricao, p.foto FROM produtos p INNER JOIN tipos_produto tp ON p.tipo_produto = tp.id WHERE p.ativo = TRUE";
+    $produtos = $app['db']->fetchAll($sql);
+    
+    return $app['twig']->render('produtos.html', array('produtos' => $produtos));
+});
+
 $app->get('/', function() use ($app) {
     return $app['twig']->render('inicial.html');
 });
+
+/* funcoes utilitarias */
+
+function random_password( $length = 8 ) {
+    $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-=+;:,.?";
+    $password = substr( str_shuffle( $chars ), 0, $length );
+    return $password;
+}
