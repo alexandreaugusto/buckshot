@@ -35,16 +35,16 @@ $app->match('/novo-cliente', function (Request $request) use ($app) {
         ->add('senha', 'password', array('attr' => array('placeholder' => 'Defina uma senha'),
                                         'constraints' => array(new Assert\NotBlank(), new Assert\Length(array('min' => 8)))
                                 ))
-        ->add('telefone', 'text', array('attr' => array('placeholder' => 'Telefone residencial')))
+        ->add('telefone', 'text', array('attr' => array('placeholder' => 'Telefone residencial', 'data-mask' => '(00)0000-0000')))
         ->add('celular', 'text', array('attr' => array('placeholder' => 'Telefone celular')))
-        ->add('endereco')
-        ->add('bairro')
-        ->add('cidade')
+        ->add('endereco', 'text', array('attr' => array('placeholder' => 'Rua e numero da casa/apartamento')))
+        ->add('bairro', 'text', array('attr' => array('placeholder' => 'Bairro que voce mora')))
+        ->add('cidade', 'text', array('attr' => array('placeholder' => 'Cidade que voce mora')))
         ->add('estado', ChoiceType::class, array(
             'choices' => array(""=>"","AC"=>"Acre", "AL"=>"Alagoas", "AM"=>"Amazonas", "AP"=>"Amapa","BA"=>"Bahia","CE"=>"Ceara","DF"=>"Distrito Federal","ES"=>"Espirito Santo","GO"=>"Goias","MA"=>"Maranhao","MT"=>"Mato Grosso","MS"=>"Mato Grosso do Sul","MG"=>"Minas Gerais","PA"=>"Para","PB"=>"Paraiba","PR"=>"Parana","PE"=>"Pernambuco","PI"=>"Piaui","RJ"=>"Rio de Janeiro","RN"=>"Rio Grande do Norte","RO"=>"Rondonia","RS"=>"Rio Grande do Sul","RR"=>"Roraima","SC"=>"Santa Catarina","SE"=>"Sergipe","SP"=>"Sao Paulo","TO"=>"Tocantins"),
             'constraints' => array(new Assert\NotBlank())
         ))
-        ->add('cep', 'text', array('label' => 'CEP', 'attr' => array('placeholder' => 'CEP da sua casa'), 'constraints' => array(new Assert\NotBlank(), new Assert\Length(array('min' => 9)))))
+        ->add('cep', 'text', array('label' => 'CEP', 'attr' => array('placeholder' => 'CEP da sua casa', 'data-mask' => '00000-000'), 'constraints' => array(new Assert\NotBlank(), new Assert\Length(array('min' => 9)))))
         ->getForm();
 
     if ($request->isMethod('POST')) {
