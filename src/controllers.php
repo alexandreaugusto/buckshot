@@ -211,7 +211,7 @@ $app->post('/vendas/processar-venda/{dataVenda}', function(Request $request, $da
 
 });
 
-$app->get('/vendas/confirmar-venda/{dataVenda}', function(Request $request, $dataVenda) use ($app) {
+$app->post('/vendas/confirmar-venda/{dataVenda}', function(Request $request, $dataVenda) use ($app) {
     //return $app->redirect('../../produtos');
     $ip = $app['request']->server->get('REMOTE_ADDR');
     $idFornada = intval($request->get('fornada-id'));
@@ -236,8 +236,8 @@ $app->get('/vendas/confirmar-venda/{dataVenda}', function(Request $request, $dat
         $message->setFrom(array("contato@brigadeirogourmetdelicia.com.br"));
         $message->setTo(array("contato@brigadeirogourmetdelicia.com.br"));
 
-        $message->setBody("Novo pedido de brigadeiro!\r\n\r\nCliente (Nome/E-mail): " . $cliente . " / " . $email . "\r\nHora/Data:" . date("H:i:s") . " do dia " . date("d/m/Y") . "\r\nFeito a partir do equipamento identificado pelo IP: " . $ip . "\r\n\r\n" . $cont . " itens:\r\n\r\n" . $corpoMensagem);
-        $app['monolog']->addDebug("E-mail: " . $email);
+        $message->setBody("Novo pedido de brigadeiro!\r\n\r\nCliente (Nome/E-mail): " . $cliente . " / " . $clienteEmail . "\r\nHora/Data:" . date("H:i:s") . " do dia " . date("d/m/Y") . "\r\nFeito a partir do equipamento identificado pelo IP: " . $ip . "\r\n\r\n" . $cont . " itens:\r\n\r\n" . $corpoMensagem);
+        $app['monolog']->addDebug("E-mail: " . $clienteEmail);
         $app['mailer']->send($message);
 
         $app['session']->getFlashBag()->add('message', 'Pedido registrado com sucesso!');
