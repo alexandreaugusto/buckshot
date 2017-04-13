@@ -237,12 +237,21 @@ $app->post('/vendas/confirmar-venda/{dataVenda}', function(Request $request, $da
 
         $message = \Swift_Message::newInstance();
         $message->setSubject("Novo pedido de brigadeiros!");
-        $message->setFrom(array("contato@brigadeirogourmetdelicia.com.br"));
+        $message->setFrom(array("alexandre@sparkcup.com"));
         $message->setTo(array("contato@brigadeirogourmetdelicia.com.br"));
 
         $message->setBody("Novo pedido de brigadeiro!\r\n\r\nCliente (Nome/E-mail): " . $cliente . " / " . $clienteEmail . "\r\nHora/Data:" . date("H:i:s") . " do dia " . date("d/m/Y") . "\r\nFeito a partir do equipamento identificado pelo IP: " . $ip . "\r\n\r\n" . $cont . " itens:\r\n\r\n" . $corpoMensagem);
         $app['monolog']->addDebug("E-mail: " . $clienteEmail);
         $app['mailer']->send($message);
+
+        $msg = \Swift_Message::newInstance();
+        $msg->setSubject("Seu pedido de brigadeiro foi recebido!");
+        $msg->setFrom(array("alexandre@sparkcup.com"));
+        $msg->setTo(array($clienteEmail));
+
+        $msg->setBody("Ola " . $cliente . "!\r\n\r\nSeu pedido foi registrado e voce recebera o(s) seu(s) delicioso(s) brigadeiro(s) em breve!\r\n" . "Hora/Data:" . date("H:i:s") . " do dia " . date("d/m/Y"));
+        
+        $app['mailer']->send($msg);
 
         $app['session']->getFlashBag()->add('message', 'Pedido registrado com sucesso!');
     } else {
