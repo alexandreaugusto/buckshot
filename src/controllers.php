@@ -7,15 +7,20 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\User as AdvancedUser;
 
+
 $app->before(function () use ($app) {
     $app['translator']->addLoader('xlf', new Symfony\Component\Translation\Loader\XliffFileLoader());
     $app['translator']->addResource('xlf', __DIR__.'/vendor/symfony/validator/Symfony/Component/Validator/Resources/translations/validators/validators.sr_Latn.xlf', 'sr_Latn', 'validators');
 });
 
 $login = function(Request $request) use ($app) {
+    $referer = $request->headers->get('referer');
+
+    $app['session']->set('old-referer', (strpos($referer, 'vendas') !== false)?'/cliente/confirmar-venda/' . substr($referer, strrpos($referer, '/')+1):'');
+
     return $app['twig']->render('login_.html', array(
         'error' => $app['security.last_error']($request),
-        'last_username' => $app['session']->get('_security.last_username'),
+        'last_username' => $app['session']->get('_security.last_username')
     ));
 };
 
@@ -122,7 +127,7 @@ $app->get('/vendas/{dataVenda}', function($dataVenda) use ($app) {
         if($fornada != null) {
             $idFornada = $fornada['id'];
 
-            $sql = "SELECT DISTINCT(fp.produto) AS id_produto, p.descricao, p.foto, p.preco, t.tipo AS tipo_produto ";
+            $sql = "SELECT DISTINCT(fp.produto) AS id_produto, p.descricao, p.miniatura_foto, p.preco, t.tipo AS tipo_produto ";
             $sql .= "FROM fornadaxprodutos fp INNER JOIN produtos p ON fp.produto = p.id INNER JOIN tipos_produto t ON ";
             $sql .= "p.tipo_produto = t.id WHERE fp.fornada = ?";
 
@@ -204,6 +209,10 @@ $app->post('/vendas/processar-venda/{dataVenda}', function(Request $request, $da
     //return print_r($pedido, true);
     return $app['twig']->render('revisao-pedido.html', array('items' => $pedido, 'total' => number_format($total, 2), 'idFornada' => $idFornada, 'data_venda' => $dataVenda));
 
+});
+
+$app->get('/cliente/confirmar-venda/{dataVenda}', function(Request $request, $dataVenda) use ($app) {
+    return $app->redirect('../../produtos');
 });
 
 $app->get('/produtos', function() use ($app) {

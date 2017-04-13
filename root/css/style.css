@@ -54,21 +54,21 @@ h2 {
 }
 
 h2 p {
-    font-size:14px;
+    font-size:1em;
 }
 
 h3 {
     color:#a45e4d;
-    font-size:24px;
+    font-size:1.714em;
 }
 
 h3 span {
-    font-size:14px;
+    font-size:0.750em;
     color:#5a5b5c;
 }
 
 figcaption {
-    font-size:10px;
+    font-size:0.714em;
     text-align:justify;
 }
 

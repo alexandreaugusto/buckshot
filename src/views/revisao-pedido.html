@@ -1,5 +1,5 @@
 
-  		<form class="form-horizontal" method="post" action="{{ app.request.basepath }}/vendas/confirmar-venda/{{ data_venda }}">
+  		<form class="form-horizontal" method="get" action="{{ app.request.basepath }}/cliente/confirmar-venda/{{ data_venda }}">
             <input type="hidden" name="fornada-id" id="fornada-id" value="{{ idFornada }}">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -12,17 +12,17 @@
                             <div class="span12">
                                 <div class="row">
                                     <div class="col-sm-12 texto">
-                                        <h3 class="col-sm-6 cabecalho">Itens do pedido</h3>
-                                        <h3 class="col-sm-3 cabecalho">Quantidade</h3>
-                                        <h3 class="col-sm-3 cabecalho">Valor</h3>
+                                        <h4 class="col-xs-8 col-sm-6">Itens do pedido</h3>
+                                        <h4 class="col-xs-2 col-sm-3">Quantidade</h3>
+                                        <h4 class="col-xs-2 col-sm-3">Valor</h3>
                                         {% for key, item in items %}
                                         {% set produto = key %}
                                             {% for key, sabor in items[key] %}
                                                 {% if sabor.erro is not defined %}
                                         <div class="row">
-                                            <div class="col-sm-6"><u>{{ produto }}</u> - {{ key }}</div>
-                                            <div class="col-sm-3">{{ sabor.quantidade }}</div>
-                                            <div class="col-sm-3">R$ {{ sabor.preco }}</div>
+                                            <div class="col-xs-7 col-sm-6"><u>{{ produto }}</u> - {{ key }}</div>
+                                            <div class="col-xs-2 col-sm-3">{{ sabor.quantidade }}</div>
+                                            <div class="col-xs-3 col-sm-3">R$ {{ sabor.preco }}</div>
                                         </div>
                                                 {% else %}
                                         <div class="row">
@@ -41,10 +41,10 @@
                                         {% endfor %}
                                         {% if items|length > 0 %}
                                         <div class="row">
-                                            <div class="col-sm-6">
+                                            <div class="col-xs-8 col-sm-6">
                                                 <strong>Total</strong>
                                             </div>
-                                            <div class="col-sm-6 text-left">
+                                            <div class="col-xs-4 col-sm-6 text-left">
                                                 <strong>R$ {{ total }}</strong>
                                             </div>
                                         </div>
@@ -57,7 +57,7 @@
       			</fieldset>
             </div>
             <div class="modal-footer">
+                {% if items|length > 0 %}<button type="submit" class="btn btn-success" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Processando pedido">Confirmo meu pedido, quero pag&aacute;-lo!</button>{% endif %}
                 <button type="button" class="btn btn-warning" data-dismiss="modal">Fechar</button>
-                {% if items|length > 0 %}<button type="submit" class="btn btn-success">Confirmo meu pedido, quero pag&aacute;-lo!</button>{% endif %}
             </div>
   		</form>

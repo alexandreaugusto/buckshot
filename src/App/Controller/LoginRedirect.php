@@ -16,7 +16,13 @@ class LoginRedirect implements ControllerProviderInterface {
     public function index(Application $app) {
 
         if (($app['security.authorization_checker']->isGranted('ROLE_CUSTOMER'))) {
-            return $app->redirect($app['url_generator']->generate('cliente'));
+            $referer = $app['session']->get('old-referer');
+            $app['monolog']->addDebug("Teste: " . $referer);
+            if($referer != null) {
+                $app['session']->remove('old-referer');
+                return $app->redirect($referer);
+            } else
+                return $app->redirect($app['url_generator']->generate('cliente'));
         }
 
         return $app->redirect('/novo-cliente');
