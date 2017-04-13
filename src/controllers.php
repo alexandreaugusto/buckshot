@@ -116,7 +116,7 @@ $app->get('/vendas/{dataVenda}', function($dataVenda) use ($app) {
 
     //seta a data atual e o horario de 12:55 para comparacao com a data da venda das encomendas
     $dataVenda = \DateTime::createFromFormat('Y-m-d', $dataVenda, new \DateTimeZone('America/Sao_Paulo'));
-    $dataVenda->setTime(12, 55);
+    $dataVenda->setTime(16, 55);
     $dataAtual = new \DateTime('now', new \DateTimeZone('America/Sao_Paulo'));
 
     if($dataAtual <= $dataVenda) { //se a data for valida
