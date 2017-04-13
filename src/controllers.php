@@ -236,7 +236,7 @@ $app->get('/vendas/confirmar-venda/{dataVenda}', function(Request $request, $dat
         $message->setFrom(array("contato@brigadeirogourmetdelicia.com.br"));
         $message->setTo(array("contato@brigadeirogourmetdelicia.com.br"));
 
-        $message->setBody("Novo pedido de brigadeiro!\r\n\r\nCliente (Nome/E-mail): " . $cliente . " / " . $email . "\r\nHora/Data:" . date("H:i:s") . " do dia " . date("d/m/Y") . "\r\nFeito a partir do equipamento identificado pelo IP: " . $ip . "\r\n\r\n" . $cont . " itens:\r\n\r\n" . $corpoMensagem;
+        $message->setBody("Novo pedido de brigadeiro!\r\n\r\nCliente (Nome/E-mail): " . $cliente . " / " . $email . "\r\nHora/Data:" . date("H:i:s") . " do dia " . date("d/m/Y") . "\r\nFeito a partir do equipamento identificado pelo IP: " . $ip . "\r\n\r\n" . $cont . " itens:\r\n\r\n" . $corpoMensagem);
         $app['monolog']->addDebug("E-mail: " . $email);
         $app['mailer']->send($message);
 
