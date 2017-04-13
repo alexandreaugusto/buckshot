@@ -162,7 +162,7 @@ $app->post('/vendas/processar-venda/{dataVenda}', function(Request $request, $da
 
     $sabores = array();
     $quantidades = array();
-    $order = array();
+    $order = array('ip' => $ip, 'items' => array());
     $pedido = array();
 
     $total = 0;
@@ -195,7 +195,7 @@ $app->post('/vendas/processar-venda/{dataVenda}', function(Request $request, $da
 
                     if(is_null($quantidadeRestante) || ( !is_null($quantidadeRestante) && ($quantidadeRestante >= intval($quantidades[$i])) )) {
                         $pedido[$produto][$sabor]["preco"] = number_format($quantidades[$i] * $preco, 2);
-                        $order[] = array(1, intval($idProduto), intval($sabores[$i]), intval($idFornada), 1, intval($quantidades[$i]));
+                        $order['items'][] = array('id_cliente' => 1, 'id_produto' => intval($idProduto), 'id_sabor' => intval($sabores[$i]), 'id_fornada' => intval($idFornada), 'status_pedido' => 1, 'quantidade' => intval($quantidades[$i]));
                         $total += $quantidades[$i]*$preco;
                     } else
                         $pedido[$produto][$sabor]["erro"] = intval($quantidades[$i])-$quantidadeRestante;
@@ -211,8 +211,41 @@ $app->post('/vendas/processar-venda/{dataVenda}', function(Request $request, $da
 
 });
 
-$app->get('/cliente/confirmar-venda/{dataVenda}', function(Request $request, $dataVenda) use ($app) {
-    return $app->redirect('../../produtos');
+$app->get('/vendas/confirmar-venda/{dataVenda}', function(Request $request, $dataVenda) use ($app) {
+    //return $app->redirect('../../produtos');
+    $ip = $app['request']->server->get('REMOTE_ADDR');
+    $idFornada = intval($request->get('fornada-id'));
+
+    $cliente = $request->get('cliente-nome');
+    $clienteEmail = $request->get('cliente-email');
+    $localEntrega = $request->get('cliente-local');
+
+    $order_items = $app['session']->get('order_items');
+
+    if($order_items['ip'] == $ip) {
+        $cont = 0;
+        $corpoMensagem = "";
+        foreach($order_items['items'] as $item) {
+            $app['db']->insert('pedidos', $item);
+            $corpoMensagem .= print_r($item, true);
+            $cont++;
+        }
+
+        $message = \Swift_Message::newInstance();
+        $message->setSubject("Novo pedido de brigadeiros!");
+        $message->setFrom(array("contato@brigadeirogourmetdelicia.com.br"));
+        $message->setTo(array("contato@brigadeirogourmetdelicia.com.br"));
+
+        $message->setBody("Novo pedido de brigadeiro!\r\n\r\nCliente (Nome/E-mail): " . $cliente . " / " . $email . "\r\nHora/Data:" . date("H:i:s") . " do dia " . date("d/m/Y") . "\r\nFeito a partir do equipamento identificado pelo IP: " . $ip . "\r\n\r\n" . $cont . " itens:\r\n\r\n" . "";
+        $app['monolog']->addDebug("E-mail: " . $email);
+        $app['mailer']->send($message);
+
+        $app['session']->getFlashBag()->add('message', 'Pedido registrado com sucesso!');
+    } else {
+        $app['session']->getFlashBag()->add('error', 'Ocorreu algum erro inesperado!');
+    }
+
+    return $app->redirect('/vendas/' . $dataVenda);
 });
 
 $app->get('/produtos', function() use ($app) {
