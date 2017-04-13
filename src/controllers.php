@@ -222,10 +222,14 @@ $app->post('/vendas/confirmar-venda/{dataVenda}', function(Request $request, $da
 
     $order_items = $app['session']->get('order_items');
 
+    $app['db']->insert('clientes', array('nome' => $cliente, 'email' => $clienteEmail));
+    $idCliente = $app['db']->lastInsertId();
+
     if($order_items['ip'] == $ip) {
         $cont = 0;
         $corpoMensagem = "";
         foreach($order_items['items'] as $item) {
+            $item['id_cliente'] = $idCliente;
             $app['db']->insert('pedidos', $item);
             $corpoMensagem .= print_r($item, true);
             $cont++;
