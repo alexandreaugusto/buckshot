@@ -177,7 +177,7 @@
             var suffix = $(this).attr('id').substring(10);
 
             if($(this).val().trim() != "")
-                $('#valor' + suffix).val((parseInt($(this).val()) * $('#valor' + suffix).data('preco')) + ".00");
+                $('#valor' + suffix).val(parseFloat(parseInt($(this).val()) * parseFloat($('#valor' + suffix).data('preco'))).toFixed(2));
             else
                 $('#valor' + suffix).val("");
 

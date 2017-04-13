@@ -7,3 +7,4 @@
 
 # Apache configuration file
 /root/.htaccess
+*.lock
